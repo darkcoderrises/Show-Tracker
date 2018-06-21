@@ -55,7 +55,7 @@ list.forEach(val => {
     let name = val[1];
     console.log(id, name);
 
-    request('http://eztv.ag/api/get-torrents?imdb_id='+id, (error, response, body) => {
+    request('https://eztv.ag/api/get-torrents?imdb_id='+id, (error, response, body) => {
         let torrents = JSON.parse(response.body).torrents;
         let downloading = show_db.findOne({show_id:id});
 
