@@ -59,26 +59,30 @@ list.forEach(val => {
         let torrents = JSON.parse(response.body).torrents;
         let downloading = show_db.findOne({show_id:id});
 
-        torrents.forEach(torrent => {
-            let result = parser(torrent.filename);
-            let date = new Date(torrent.date_released_unix * 1000);
-            let episode = result.episode;;
-            let season = result.season;
-            let url = torrent.magnet_url;
-            let ep_id = episode + '-' + season;
+        try {
+            torrents.forEach(torrent => {
+                let result = parser(torrent.filename);
+                let date = new Date(torrent.date_released_unix * 1000);
+                let episode = result.episode;;
+                let season = result.season;
+                let url = torrent.magnet_url;
+                let ep_id = episode + '-' + season;
 
-            let today = new Date();
-            if (today.isSameDateAs(date)) {
-                if (downloading.shows[ep_id])
-                    return;
-                downloading.shows[ep_id] = 1;
-                let folder_name = "/media/harshil/5BC5BA7D3CFE7239/Series/"+name+"/"+season+"/";
-                console.log('downloading');
-                qbt.add(url, folder_name);
-                sendMessage("Downloading " + name + " (" + season + "," + episode + ")");
-            }
-        });
+                let today = new Date();
+                if (today.isSameDateAs(date)) {
+                    if (downloading.shows[ep_id])
+                        return;
+                    downloading.shows[ep_id] = 1;
+                    let folder_name = "/media/harshil/5BC5BA7D3CFE7239/Series/"+name+"/"+season+"/";
+                    console.log('downloading');
+                    qbt.add(url, folder_name);
+                    sendMessage("Downloading " + name + " (" + season + "," + episode + ")");
+                }
+            });
 
-        show_db.save(downloading);
+            show_db.save(downloading);
+        } catch (except) {
+            console.log(name);
+        }
     })
 });
