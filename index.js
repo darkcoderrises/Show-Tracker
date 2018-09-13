@@ -73,7 +73,7 @@ list.forEach(val => {
                     if (downloading.shows[ep_id])
                         return;
                     downloading.shows[ep_id] = 1;
-                    let folder_name = "/media/harshil/5BC5BA7D3CFE7239/Series/"+name+"/"+season+"/";
+                    let folder_name = "~/Media/Series/"+name+"/"+season+"/";
                     console.log('downloading');
                     qbt.add(url, folder_name);
                     sendMessage("Downloading " + name + " (" + season + "," + episode + ")");
