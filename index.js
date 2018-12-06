@@ -27,10 +27,40 @@ let sendMessage = (msg) => {
     execute();
 };
 
-login({email: config.facebook.username, password: config.facebook.password}, {pageID: config.facebook.alfredID}, (err, api) => {
-    fbapi = api;
-    execute();
+const readline = require("readline");
+
+var rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
 });
+
+if (!fs.existsSync('appstate.json')) {
+    login({email: config.facebook.username, password: config.facebook.password}, {pageID: config.facebook.alfredID}, (err, api) => {
+        if(err) {
+            switch (err.error) {
+                case 'login-approval':
+                    console.log('Enter code > ');
+                    rl.on('line', (line) => {
+                        err.continue(line);
+                        rl.close();
+                    });
+                    break;
+                default:
+                    console.error(err);
+            }
+            return;
+        }
+        fs.writeFileSync('appstate.json', JSON.stringify(api.getAppState()));
+        fbapi = api;
+        execute();
+    });
+} else {
+    login({appState: JSON.parse(fs.readFileSync('appstate.json', 'utf8'))}, (err, api) => {
+        if(err) return console.error(err);
+        fbapi = api;
+        execute();
+    });
+}
 
 Date.prototype.isSameDateAs = function(pDate) {
     return (
@@ -73,7 +103,7 @@ list.forEach(val => {
                     if (downloading.shows[ep_id])
                         return;
                     downloading.shows[ep_id] = 1;
-                    let folder_name = "~/Media/Series/"+name+"/"+season+"/";
+                    let folder_name = "/home/harshil/Media/Series/"+name+"/"+season+"/";
                     console.log('downloading');
                     qbt.add(url, folder_name);
                     sendMessage("Downloading " + name + " (" + season + "," + episode + ")");
