@@ -3,3 +3,4 @@ node_modules/
 *.swp
 config.json
 show_data.json
+appstate.json

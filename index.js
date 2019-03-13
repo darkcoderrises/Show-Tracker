@@ -53,12 +53,14 @@ if (!fs.existsSync('appstate.json')) {
         fs.writeFileSync('appstate.json', JSON.stringify(api.getAppState()));
         fbapi = api;
         execute();
+        rl.close();
     });
 } else {
     login({appState: JSON.parse(fs.readFileSync('appstate.json', 'utf8'))}, (err, api) => {
         if(err) return console.error(err);
         fbapi = api;
         execute();
+        rl.close();
     });
 }
 
@@ -85,8 +87,15 @@ list.forEach(val => {
     let name = val[1];
     console.log(id, name);
 
-    request('https://eztv.ag/api/get-torrents?imdb_id='+id, (error, response, body) => {
-        let torrents = JSON.parse(response.body).torrents;
+    request('https://eztv1.unblocked.is/api/get-torrents?imdb_id='+id, (error, response, body) => {
+        let torrents;
+        try {
+            torrents = JSON.parse(response.body).torrents;
+        } catch (except) {
+            console.log(response);
+            return;
+        }
+
         let downloading = show_db.findOne({show_id:id});
 
         try {
@@ -112,7 +121,7 @@ list.forEach(val => {
 
             show_db.save(downloading);
         } catch (except) {
-            console.log(name);
+            console.log(name, 'hi');
         }
-    })
+    });
 });
