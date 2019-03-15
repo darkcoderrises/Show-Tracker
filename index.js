@@ -56,7 +56,7 @@ if (!fs.existsSync('appstate.json')) {
         rl.close();
     });
 } else {
-    login({appState: JSON.parse(fs.readFileSync('appstate.json', 'utf8'))}, (err, api) => {
+    login({appState: JSON.parse(fs.readFileSync('appstate.json', 'utf8'))}, {pageID: config.facebook.alfredID}, (err, api) => {
         if(err) return console.error(err);
         fbapi = api;
         execute();
